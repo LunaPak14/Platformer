@@ -1,37 +1,40 @@
 using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class LevelInterations : MonoBehaviour
 {
-    private TextMeshProUGUI coinsText;
+    public TextMeshProUGUI coinsText;
+    public TextMeshProUGUI pointText;
     private int coins = 0;
+    private int points = 0;
 
     private void Awake()
     {
         coinsText = GetComponent<TextMeshProUGUI>();
     }
 
-    void Update()
+    private void changePoints()
     {
-        // check for the left click
-        if (Input.GetMouseButtonDown(0))
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit, 100))
-            {
-                if (hit.transform.CompareTag("Brick"))
-                {
-                    Destroy(hit.transform.gameObject);
-                }
+        pointText.text = "Points \n x" + points;
+    }
 
-                else if (hit.transform.CompareTag("Question"))
-                {
-                    coins++;
-                    coinsText.text = "x" + (coins < 10 ? "0" + coins : coins);
-                }
-            }
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Brick"))
+        {
+            points += 100;
+            Destroy(collision.gameObject);
+            changePoints();
+        }
+
+        if (collision.gameObject.CompareTag("Question"))
+        {
+            points += 100;
+            coins++;
+            changePoints();
+            coinsText.text = "x" + (coins < 10 ? "0" + coins : coins);
         }
     }
 }
